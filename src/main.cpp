@@ -17,7 +17,6 @@ using std::endl;
  *Muestra el menú principal
  */
 void mostrarMenu() {
-void mostrarMenu() {
     cout << "\n========================================" << endl;
     cout << "  Sistema IoT de Monitoreo Polimórfico" << endl;
     cout << "========================================" << endl;
@@ -36,7 +35,6 @@ void mostrarMenu() {
  *  Lee un string seguro de la entrada
  *  tamanio Tamaño máximo del buffer
  */
-void leerString(char* buffer, int tamanio) {
 void leerString(char* buffer, int tamanio) {
     cin.getline(buffer, tamanio);
     // Limpiar espacios en blanco al inicio
@@ -57,7 +55,6 @@ void crearSensor(GestorSensores& gestor, bool esTemperatura) {
     char nombreSensor[50];
     cout << "\nIngrese el identificador del sensor (ej: T-001, P-105): ";
     leerString(nombreSensor, sizeof(nombreSensor));
-void crearSensor(GestorSensores& gestor, bool esTemperatura) {
 
     if (std::strlen(nombreSensor) == 0) {
         cout << "[Error] El nombre del sensor no puede estar vacío." << endl;
@@ -79,7 +76,6 @@ void registrarLectura(GestorSensores& gestor) {
     if (gestor.estaVacio()) {
         cout << "[Advertencia] No hay sensores registrados." << endl;
         return;
-void registrarLectura(GestorSensores& gestor) {
     }
 
     char nombreSensor[50];
@@ -105,7 +101,6 @@ void conectarArduino(GestorSensores& gestor) {
     if (gestor.estaVacio()) {
         cout << "[Advertencia] No hay sensores registrados. Cree al menos uno." << endl;
         return;
-void conectarArduino(GestorSensores& gestor) {
     }
 
     cout << "\n========== Conexión Arduino/ESP32 ==========" << endl;
@@ -185,7 +180,6 @@ void conectarArduino(GestorSensores& gestor) {
 /**
  * @brief Función principal
  */
-int main() {
 int main() {
     cout << "\n╔════════════════════════════════════════════╗" << endl;
     cout << "║  Sistema IoT de Monitoreo Polimórfico     ║" << endl;

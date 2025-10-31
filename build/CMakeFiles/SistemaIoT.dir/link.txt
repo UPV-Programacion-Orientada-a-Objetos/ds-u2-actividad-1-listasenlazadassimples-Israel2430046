@@ -1,0 +1,3 @@
+C:\Strawberry\c\bin\cmake.exe -E rm -f CMakeFiles\SistemaIoT.dir/objects.a
+C:\msys64\ucrt64\bin\ar.exe qc CMakeFiles\SistemaIoT.dir/objects.a @CMakeFiles\SistemaIoT.dir\objects1.rsp
+C:\msys64\ucrt64\bin\g++.exe  -Wall -Wextra -pedantic -mwindows -g -Wl,--whole-archive CMakeFiles\SistemaIoT.dir/objects.a -Wl,--no-whole-archive -o SistemaIoT.exe -Wl,--out-implib,libSistemaIoT.dll.a -Wl,--major-image-version,1,--minor-image-version,0 @CMakeFiles\SistemaIoT.dir\linkLibs.rsp

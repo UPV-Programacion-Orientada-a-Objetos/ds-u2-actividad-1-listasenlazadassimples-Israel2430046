@@ -1,0 +1,339 @@
+\documentclass[12pt, spanish]{article}
+\usepackage[utf-8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{color}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage{float}
+
+% Configuración de página
+\geometry{a4paper, margin=2cm}
+
+% Configuración de código
+\lstset{
+    language=C++,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{gray},
+    stringstyle=\color{red},
+    showstringspaces=false,
+    breaklines=true,
+    frame=single,
+    numbers=left,
+    numberstyle=\small\color{gray},
+    tabsize=4,
+    inputencoding=utf8,
+    extendedchars=true
+}
+
+% Encabezado y pie de página
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Sistema IoT de Gestión de Sensores}
+\lhead{Estructuras de Datos}
+\cfoot{\thepage}
+
+% Comando para secciones
+\newcommand{\secc}[1]{\section{#1}\vspace{0.3cm}}
+
+\title{
+    \textbf{Sistema de Gestión Polimórfica de Sensores para IoT} \\
+    \vspace{1cm}
+    \Large{Listas Enlazadas Simples Genéricas con Arduino/ESP32}
+}
+
+\author{}
+
+\date{
+    Noviembre de 2025
+}
+
+\begin{document}
+
+\maketitle
+
+\newpage
+\tableofcontents
+\newpage
+
+% ==================== INTRODUCCIÓN ====================
+\secc{Introducción}
+
+Este informe presenta el desarrollo de un \textbf{Sistema de Gestión Polimórfica de Sensores para IoT} que implementa conceptos avanzados de Programación Orientada a Objetos (POO) e Estructuras de Datos en C++.
+
+\subsection{Objetivo General}
+
+Diseñar e implementar un sistema de bajo nivel que gestione múltiples tipos de sensores (temperatura, presión) mediante:
+\begin{itemize}
+    \item \textbf{Jerarquía Polimórfica}: Clases abstractas y métodos virtuales puros
+    \item \textbf{Listas Enlazadas Simples Genéricas}: Plantillas C++ para tipos genéricos
+    \item \textbf{Gestión Manual de Memoria}: Implementación de la Regla de los Tres/Cinco
+    \item \textbf{Comunicación Serial}: Integración con Arduino/ESP32
+\end{itemize}
+
+\subsection{Motivación}
+
+Las limitaciones identificadas en sistemas tradicionales son:
+\begin{enumerate}
+    \item \textbf{Rigidez de Tipo}: No todos los sensores generan datos del mismo tipo (int vs float)
+    \item \textbf{Rigidez de Estructura}: El número de lecturas por sensor es variable
+    \item \textbf{Mantenibilidad}: Agregar nuevos tipos de sensores requiere reescribir lógica existente
+\end{enumerate}
+
+La solución propuesta utiliza polimorfismo y genéricos para superar estas limitaciones.
+
+% ==================== MANUAL TÉCNICO ====================
+\secc{Manual Técnico}
+
+\subsection{Arquitectura del Sistema}
+
+El sistema está compuesto por los siguientes componentes principales:
+
+\begin{center}
+\begin{tabularx}{\textwidth}{|X|X|}
+\hline
+\textbf{Componente} & \textbf{Descripción} \\
+\hline
+\texttt{SensorBase} & Clase abstracta que define la interfaz común \\
+\hline
+\texttt{SensorTemperatura} & Sensor concreto para lecturas float \\
+\hline
+\texttt{SensorPresion} & Sensor concreto para lecturas int \\
+\hline
+\texttt{ListaSensor<T>} & Plantilla genérica para listas enlazadas \\
+\hline
+\texttt{GestorSensores} & Gestor polimórfico de la lista principal \\
+\hline
+\texttt{ComunicacionSerial} & Interfaz para Arduino/ESP32 \\
+\hline
+\end{tabularx}
+\end{center}
+
+\subsection{Diseño de Clases}
+
+\subsubsection{Clase Base Abstracta: \texttt{SensorBase}}
+
+\begin{lstlisting}
+class SensorBase {
+protected:
+    char nombre[50];
+public:
+    virtual ~SensorBase() {}
+    virtual void procesarLectura() = 0;
+    virtual void imprimirInfo() const = 0;
+    virtual void registrarLectura(double valor) = 0;
+};
+\end{lstlisting}
+
+\textbf{Características:}
+\begin{itemize}
+    \item Destructor virtual para polimorfismo correcto
+    \item Métodos virtuales puros para forzar implementación
+    \item Atributo protegido para identificar sensores
+\end{itemize}
+
+\subsubsection{Plantilla: \texttt{ListaSensor<T>}}
+
+\begin{lstlisting}
+template <typename T>
+class ListaSensor {
+private:
+    Nodo<T>* cabeza;
+    int cantidad;
+public:
+    ~ListaSensor();
+    ListaSensor(const ListaSensor& otra);
+    ListaSensor& operator=(const ListaSensor& otra);
+    void insertar(T valor);
+    T obtenerMinimo() const;
+    bool eliminarMinimo();
+    double calcularPromedio() const;
+};
+\end{lstlisting}
+
+\textbf{Ventajas:}
+\begin{itemize}
+    \item Genérica: Funciona con cualquier tipo numérico
+    \item Regla de los Tres/Cinco: Constructor de copia y operador de asignación
+    \item Gestión automática de memoria en destructor
+\end{itemize}
+
+\subsection{Compilación}
+
+\subsubsection{Windows}
+
+\begin{lstlisting}[language=bash]
+mkdir build
+cd build
+cmake -G "MinGW Makefiles" ..
+cmake --build . --config Release
+cd ..
+.\build\SistemaIoT.exe
+\end{lstlisting}
+
+\subsubsection{Linux/Debian 12}
+
+\begin{lstlisting}[language=bash]
+./compile.sh
+./build/SistemaIoT
+\end{lstlisting}
+
+\subsection{Comunicación Serial}
+
+El sistema establece conexión con Arduino/ESP32 mediante:
+
+\begin{itemize}
+    \item \textbf{Formato}: \texttt{ID:valor} (ej: \texttt{T-001:25.5})
+    \item \textbf{Velocidad}: 9600 o 115200 baudios
+    \item \textbf{Puertos}:
+    \begin{itemize}
+        \item Windows: COM3, COM4, etc.
+        \item Linux: /dev/ttyUSB0, /dev/ttyACM0
+    \end{itemize}
+\end{itemize}
+
+% ==================== RESULTADOS ====================
+\secc{Resultados}
+
+\subsection{Ejecución del Programa}
+
+El programa genera la siguiente salida:
+
+\begin{lstlisting}
+╔════════════════════════════════════════════╗
+║  Sistema IoT de Monitoreo Polimórfico     ║
+║  Gestión de Sensores con Listas Enlazadas ║
+║  Compatible con Arduino/ESP32             ║
+╚════════════════════════════════════════════╝
+
+========================================
+  Sistema IoT de Monitoreo Polimórfico
+========================================
+1. Crear Sensor de Temperatura (FLOAT)
+2. Crear Sensor de Presión (INT)
+3. Registrar Lectura en Sensor
+4. Conectar con Arduino/ESP32 (Puerto Serial)
+5. Procesar Lecturas (Polimorfismo)
+6. Ver Estado de Sensores
+7. Cerrar Sistema (Liberar Memoria)
+========================================
+\end{lstlisting}
+
+\subsection{Flujo de Ejecución}
+
+\begin{enumerate}
+    \item \textbf{Crear Sensor}: Se instancia un \texttt{SensorTemperatura} o \texttt{SensorPresion}
+    \item \textbf{Registrar Lecturas}: Se insertan valores en \texttt{ListaSensor<T>}
+    \item \textbf{Procesamiento Polimórfico}: Se llama a \texttt{procesarLectura()} en cada sensor
+    \item \textbf{Liberación de Memoria}: El destructor virtual limpia recursivamente
+\end{enumerate}
+
+\subsection{Análisis de Complejidad}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{|X|X|X|}
+\hline
+\textbf{Operación} & \textbf{Complejidad} & \textbf{Notas} \\
+\hline
+Insertar & $O(n)$ & Inserta al final \\
+\hline
+Buscar & $O(n)$ & Búsqueda lineal \\
+\hline
+Obtener Mínimo & $O(n)$ & Recorre toda la lista \\
+\hline
+Eliminar Mínimo & $O(n)$ & Búsqueda + eliminación \\
+\hline
+Calcular Promedio & $O(n)$ & Suma + división \\
+\hline
+\end{tabularx}
+\end{center}
+
+% ==================== CONCLUSIONES ====================
+\secc{Conclusiones}
+
+\subsection{Logros Alcanzados}
+
+\begin{itemize}
+    \item ✓ Implementación completa de Listas Enlazadas Simples Genéricas
+    \item ✓ Jerarquía polimórfica con métodos virtuales puros
+    \item ✓ Gestión manual de memoria sin fugas (Regla de los Tres)
+    \item ✓ Comunicación bidireccional con Arduino/ESP32
+    \item ✓ Compatibilidad con Windows y Linux/Debian 12
+    \item ✓ Generación automática de documentación con Doxygen
+    \item ✓ Sistema de compilación con CMake
+\end{itemize}
+
+\subsection{Conceptos Aplicados}
+
+\begin{enumerate}
+    \item \textbf{POO Avanzada}: Herencia, polimorfismo, métodos virtuales puros
+    \item \textbf{Plantillas (Templates)}: Genéricos en C++
+    \item \textbf{Gestión de Memoria}: Punteros, new/delete, destructores virtuales
+    \item \textbf{Estructuras de Datos}: Listas enlazadas simples
+    \item \textbf{Comunicación}: Puerto serial multiplataforma
+\end{enumerate}
+
+\subsection{Mejoras Futuras}
+
+\begin{itemize}
+    \item Implementar lista enlazada doble (anterior y siguiente)
+    \item Agregar sensor de vibración
+    \item Base de datos para almacenar historial
+    \item Interfaz gráfica con Qt
+    \item Protocolo WiFi para ESP32
+    \item Logging en archivo
+\end{itemize}
+
+% ==================== REFERENCIAS ====================
+\secc{Referencias}
+
+\begin{thebibliography}{9}
+
+\bibitem{cpp_templates}
+Bjarne Stroustrup. \textit{The C++ Programming Language}. 4th Edition. Addison-Wesley, 2013.
+
+\bibitem{data_structures}
+Mark Allen Weiss. \textit{Data Structures and Algorithm Analysis in C++}. 4th Edition. Pearson, 2013.
+
+\bibitem{esp32_docs}
+Espressif Systems. \textit{ESP32 Technical Reference Manual}. https://docs.espressif.com/
+
+\bibitem{arduino_ref}
+Arduino. \textit{Arduino Reference}. https://www.arduino.cc/reference/en/
+
+\bibitem{doxygen}
+Dimitri van Heesch. \textit{Doxygen Manual}. https://www.doxygen.nl/manual/
+
+\end{thebibliography}
+
+\newpage
+\appendix
+
+\secc{Apéndice A: Instrucciones de Compilación}
+
+\subsection{Windows}
+\begin{lstlisting}[language=bash]
+cd proyecto
+compile.bat
+\end{lstlisting}
+
+\subsection{Linux/Debian 12}
+\begin{lstlisting}[language=bash]
+cd proyecto
+chmod +x compile.sh
+./compile.sh
+\end{lstlisting}
+
+\secc{Apéndice B: Configuración Arduino/ESP32}
+
+Ver archivo \texttt{INSTALL.md} para instrucciones detalladas de instalación.
+
+\end{document}

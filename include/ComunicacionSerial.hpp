@@ -24,9 +24,7 @@ private:
     char puertoNombre[256];
 
 public:
-    /**
-     * @brief Constructor de ComunicacionSerial
-     */
+   
     ComunicacionSerial() : conectado(false) {
         std::memset(puertoNombre, 0, sizeof(puertoNombre));
         
@@ -37,19 +35,12 @@ public:
         #endif
     }
 
-    /**
-     * @brief Destructor
-     */
+
     ~ComunicacionSerial() {
         desconectar();
     }
 
-    /**
-     * @brief Conecta al puerto serial
-     * @param puerto_nombre Nombre del puerto (ej: "COM3", "/dev/ttyUSB0")
-     * @param velocidad Velocidad en baudios (por defecto 9600)
-     * @return true si la conexión fue exitosa
-     */
+
     bool conectar(const char* puerto_nombre, int velocidad = 9600) {
         std::strncpy(puertoNombre, puerto_nombre, sizeof(puertoNombre) - 1);
         puertoNombre[sizeof(puertoNombre) - 1] = '\0';
@@ -61,12 +52,7 @@ public:
         #endif
     }
 
-    /**
-     * @brief Lee datos del puerto serial
-     * @param buffer Buffer para almacenar datos
-     * @param tamanio Tamaño máximo a leer
-     * @return Cantidad de bytes leídos, -1 si hay error
-     */
+
     int leer(char* buffer, int tamanio) {
         if (!conectado) {
             std::cerr << "[Error] Puerto no conectado." << std::endl;
@@ -86,12 +72,7 @@ public:
         return -1;
     }
 
-    /**
-     * @brief Escribe datos al puerto serial
-     * @param datos Datos a escribir
-     * @param tamanio Cantidad de bytes a escribir
-     * @return true si la escritura fue exitosa
-     */
+
     bool escribir(const char* datos, int tamanio) {
         if (!conectado) {
             std::cerr << "[Error] Puerto no conectado." << std::endl;
@@ -106,9 +87,7 @@ public:
         #endif
     }
 
-    /**
-     * @brief Desconecta del puerto serial
-     */
+
     void desconectar() {
         if (conectado) {
             #ifdef _WIN32
@@ -125,10 +104,7 @@ public:
         }
     }
 
-    /**
-     * @brief Verifica si está conectado
-     * @return true si está conectado
-     */
+
     bool estaConectado() const {
         return conectado;
     }
@@ -245,4 +221,4 @@ private:
     #endif
 };
 
-#endif // COMUNICACION_SERIAL_HPP
+#endif 

@@ -4,48 +4,30 @@
 #include "SensorBase.hpp"
 #include "ListaSensor.hpp"
 
-/**
- * @brief Sensor especializado en mediciones de temperatura
- * 
- * Hereda de SensorBase e implementa los métodos virtuales puros.
- * Utiliza ListaSensor<float> para almacenar el historial de mediciones.
- */
+
 class SensorTemperatura : public SensorBase {
 private:
     ListaSensor<float> historial;  ///< Historial de lecturas de temperatura
 
 public:
-    /**
-     * @brief Constructor de SensorTemperatura
-     * @param nom Nombre identificador del sensor
-     */
+
     SensorTemperatura(const char* nom) : SensorBase(nom) {
         std::cout << "[SensorTemperatura] Sensor '" << nombre << "' creado." << std::endl;
     }
 
-    /**
-     * @brief Destructor - Libera el historial
-     */
+   
     ~SensorTemperatura() {
         std::cout << "[Destructor SensorTemperatura] Liberando Lista Interna de '" 
                   << nombre << "'..." << std::endl;
     }
 
-    /**
-     * @brief Registra una lectura de temperatura
-     * @param valor Valor de temperatura en float
-     */
+
     void registrarLectura(double valor) override {
         float temperaturaFloat = static_cast<float>(valor);
         std::cout << "[" << nombre << "] Registrando lectura: " << temperaturaFloat << "°C" << std::endl;
         historial.insertar(temperaturaFloat);
     }
 
-    /**
-     * @brief Procesa las lecturas de temperatura
-     * 
-     * Elimina la lectura más baja y calcula el promedio de las restantes.
-     */
     void procesarLectura() override {
         if (historial.estaVacia()) {
             std::cout << "[SensorTemperatura] " << nombre << " - Sin lecturas registradas." << std::endl;
@@ -69,9 +51,7 @@ public:
         }
     }
 
-    /**
-     * @brief Imprime información del sensor y su historial
-     */
+
     void imprimirInfo() const override {
         std::cout << "\n=== Sensor Temperatura ===" << std::endl;
         std::cout << "Nombre: " << nombre << std::endl;
@@ -80,10 +60,7 @@ public:
         historial.imprimir();
     }
 
-    /**
-     * @brief Obtiene la cantidad de lecturas registradas
-     * @return Cantidad de lecturas
-     */
+
     int obtenerCantidadLecturas() const {
         return historial.obtenerCantidad();
     }
